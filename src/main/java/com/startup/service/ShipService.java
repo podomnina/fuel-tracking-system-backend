@@ -1,6 +1,7 @@
 package com.startup.service;
 
 import com.startup.model.entities.Ship;
+import com.startup.model.requestbody.ShipBody;
 import com.startup.repositories.ShipRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,11 +19,18 @@ public class ShipService {
         this.shipRepository = shipRepository;
     }
 
-    public Long createShip(String name) {
-        final Ship ship = new Ship();
-        ship.setName(name);
+    public Long createShip(ShipBody shipBody) {
+        final Ship ship = new Ship(shipBody);
         shipRepository.save(ship);
         return ship.getId();
+    }
+
+    public void deleteShip(Long id) {
+        shipRepository.delete(id);
+    }
+
+    public Ship getShip(Long id) {
+        return shipRepository.findOne(id);
     }
 
     public List<Ship> getAllShips() {

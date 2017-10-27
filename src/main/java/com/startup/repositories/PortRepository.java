@@ -1,8 +1,8 @@
 package com.startup.repositories;
 
-import com.startup.model.entities.Ship;
+import com.startup.model.entities.Port;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface ShipRepository extends CrudRepository<Ship, Long> {}
+public interface PortRepository extends CrudRepository<Port, Long> {}
