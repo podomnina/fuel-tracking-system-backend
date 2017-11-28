@@ -19,6 +19,17 @@ public class Ship {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
+    private float currentLatitude;
+    private float currentLongitude;
+
+    public Ship(Long id) {
+        this.id = id;
+    }
+
+    public void setCurrentCoodrinates(float currentLatitude, float currentLongitude) {
+        this.currentLatitude = currentLatitude;
+        this.currentLongitude = currentLongitude;
+    }
 
     public Ship(ShipBody shipBody) {
         this.name = shipBody.getName() != null ? shipBody.getName() : this.name;

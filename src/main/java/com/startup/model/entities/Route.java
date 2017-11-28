@@ -19,25 +19,19 @@ public class Route {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @NotNull
     @ManyToOne
-    @JoinColumn(name = "point_of_departure_id")
-    private Port pointOfDeparture;
-    @NotNull
-    @ManyToOne
-    @JoinColumn(name = "arrival_point_id")
-    private Port arrivalPoint;
+    @JoinColumn(name = "ship_id")
+    private Ship ship;
     @OneToMany
     @JoinColumn(name = "intermediate_point_id")
-    private List<Port> intermediatePoint;
+    private List<Port> routePoints;
     private Long distance;
     private float amountOfFuel;
 
     public Route(RouteBody routeBody) {
-        this.setPointOfDeparture(new Port(routeBody.getPointOfDepartureId()));
-        this.setArrivalPoint(new Port(routeBody.getArrivalPointId()));
-        this.setIntermediatePoint(routeBody.getIntermediatePointIds() != null
-                ? routeBody.getIntermediatePointIds().stream().filter(Objects::nonNull).map(Port::new).collect(toList())
+        this.setShip(new Ship(routeBody.getShipId()));
+        this.setRoutePoints(routeBody.getRoutePointIds() != null
+                ? routeBody.getRoutePointIds().stream().filter(Objects::nonNull).map(Port::new).collect(toList())
                 : new ArrayList<>());
         this.distance = routeBody.getDistance();
         this.amountOfFuel = routeBody.getAmountOfFuel();

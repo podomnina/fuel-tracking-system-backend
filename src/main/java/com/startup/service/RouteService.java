@@ -19,10 +19,14 @@ public class RouteService {
         this.routeRepository = routeRepository;
     }
 
-    public Long createRoute(RouteBody routeBody) {
+    public Long addRoute(RouteBody routeBody) {
+        return createRoute(routeBody).getId();
+    }
+
+    public Route createRoute(RouteBody routeBody) {
         final Route route = new Route(routeBody);
         routeRepository.save(route);
-        return route.getId();
+        return route;
     }
 
     public void deleteRoute(Long id) {

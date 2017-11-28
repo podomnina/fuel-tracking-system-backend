@@ -8,9 +8,8 @@ import java.util.List;
 @Data
 public class RouteBody {
     private Long id;
-    private Long pointOfDepartureId;
-    private Long arrivalPointId;
-    private List<Long> intermediatePointIds;
+    private Long shipId;
+    private List<Long> routePointIds;
     private Long distance;
     private float amountOfFuel;
 }

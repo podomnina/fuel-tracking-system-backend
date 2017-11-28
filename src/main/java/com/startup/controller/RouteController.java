@@ -32,7 +32,7 @@ public class RouteController {
     public ResponseEntity<Long> createRoute(
             @RequestBody
                     RouteBody routeBody) {
-        return new ResponseEntity<>(routeService.createRoute(routeBody), HttpStatus.OK);
+        return new ResponseEntity<>(routeService.addRoute(routeBody), HttpStatus.OK);
     }
 
     @RequestMapping(value = ROUTE_PATH, method = GET)

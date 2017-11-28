@@ -26,6 +26,12 @@ public class Port {
         this.longitude = portBody.getLongitude();
     }
 
+    public Port(Long id, float latitude, float longitude) {
+        this.id = id;
+        this.latitude = latitude;
+        this.longitude = longitude;
+    }
+
     public Port(Long id) {
         this.id = id;
     }

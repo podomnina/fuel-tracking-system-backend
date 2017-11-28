@@ -36,4 +36,8 @@ public class ShipService {
     public List<Ship> getAllShips() {
         return newArrayList(shipRepository.findAll());
     }
+
+    public void modifyShip(Ship ship) {
+        shipRepository.save(ship);
+    }
 }
