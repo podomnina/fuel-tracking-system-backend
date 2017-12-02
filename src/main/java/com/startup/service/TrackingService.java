@@ -4,6 +4,7 @@ import com.startup.model.entities.Coordinates;
 import com.startup.model.entities.Port;
 import com.startup.model.entities.Route;
 import com.startup.model.entities.Ship;
+import com.startup.model.enums.CustomPorts;
 import com.startup.model.requestbody.RouteBody;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -76,6 +77,11 @@ public class TrackingService {
     private float getB(Port port1, Port port2) {
         float k = getK(port1, port2);
         return port1.getLongitude()-k*port1.getLatitude();
+    }
+
+    public void createDataIfNotExist() {
+        portService.createPortsIfNotExists();
+        shipService.createShipsIfNotExist();
     }
 
 }

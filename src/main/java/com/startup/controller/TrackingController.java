@@ -28,4 +28,10 @@ public class TrackingController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @RequestMapping(value = "/tracking/create/data", method = POST)
+    public ResponseEntity createCustomData() {
+        trackingService.createDataIfNotExist();
+        return new ResponseEntity(HttpStatus.OK);
+    }
+
 }

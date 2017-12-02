@@ -1,6 +1,7 @@
 package com.startup.service;
 
 import com.startup.model.entities.Ship;
+import com.startup.model.enums.CustomShips;
 import com.startup.model.requestbody.ShipBody;
 import com.startup.repositories.ShipRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,5 +40,18 @@ public class ShipService {
 
     public void modifyShip(Ship ship) {
         shipRepository.save(ship);
+    }
+
+    public boolean isExist(Long id) {
+        return shipRepository.exists(id);
+    }
+
+    public void createShipsIfNotExist() {
+        CustomShips.getAll().forEach(customShips -> {
+            if (isExist(customShips.getShip().getId())) {
+                shipRepository.save(customShips.getShip());
+            }
+        });
+
     }
 }

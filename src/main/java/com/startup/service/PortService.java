@@ -2,6 +2,7 @@ package com.startup.service;
 
 
 import com.startup.model.entities.Port;
+import com.startup.model.enums.CustomPorts;
 import com.startup.model.requestbody.PortBody;
 import com.startup.repositories.PortRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,5 +37,17 @@ public class PortService {
 
     public List<Port> getAllPort() {
         return newArrayList(portRepository.findAll());
+    }
+
+    public boolean isExist(Long id) {
+        return portRepository.exists(id);
+    }
+
+    public void createPortsIfNotExists() {
+        CustomPorts.getAll().forEach(customPorts -> {
+            if (!isExist(customPorts.getPort().getId())) {
+                portRepository.save(customPorts.getPort());
+            }
+        });
     }
 }
