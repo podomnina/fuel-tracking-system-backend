@@ -48,7 +48,7 @@ public class ShipService {
 
     public void createShipsIfNotExist() {
         CustomShips.getAll().forEach(customShips -> {
-            if (isExist(customShips.getShip().getId())) {
+            if (!isExist(customShips.getShip().getId())) {
                 shipRepository.save(customShips.getShip());
             }
         });

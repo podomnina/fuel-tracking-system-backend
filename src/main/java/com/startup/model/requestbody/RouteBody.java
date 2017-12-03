@@ -9,7 +9,7 @@ import java.util.List;
 public class RouteBody {
     private Long id;
     private Long shipId;
-    private List<Long> routePointIds;
-    private Long distance;
+    private Long fromId;
+    private Long toId;
     private float amountOfFuel;
 }
