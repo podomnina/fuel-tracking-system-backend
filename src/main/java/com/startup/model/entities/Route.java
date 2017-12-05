@@ -30,6 +30,7 @@ public class Route {
     @JoinColumn(name = "intermediate_point_id")
     private List<Port> routePoints = new LinkedList<>();
     private float amountOfFuel;
+    private String info;
 
     public Route(RouteBody routeBody) {
         this.setShip(new Ship(routeBody.getShipId()));
