@@ -23,6 +23,7 @@ public class Route {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private String name;
     @ManyToOne
     @JoinColumn(name = "ship_id")
     private Ship ship;
