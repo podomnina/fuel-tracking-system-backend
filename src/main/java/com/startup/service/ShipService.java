@@ -4,14 +4,17 @@ import com.startup.model.entities.Ship;
 import com.startup.model.enums.CustomShips;
 import com.startup.model.requestbody.ShipBody;
 import com.startup.repositories.ShipRepository;
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 import static org.hibernate.validator.internal.util.CollectionHelper.newArrayList;
 
 @Service
+@Transactional
 public class ShipService {
     private final ShipRepository shipRepository;
 
@@ -31,7 +34,9 @@ public class ShipService {
     }
 
     public Ship getShip(Long id) {
-        return shipRepository.findOne(id);
+        final Ship ship = shipRepository.findOne(id);
+        Hibernate.initialize(ship);
+        return ship;
     }
 
     public List<Ship> getAllShips() {

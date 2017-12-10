@@ -4,11 +4,7 @@ import com.startup.model.requestbody.ShipBody;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-
+import javax.persistence.*;
 
 
 @Entity
@@ -21,6 +17,13 @@ public class Ship {
     private String name;
     private float currentLatitude;
     private float currentLongitude;
+    @ManyToOne
+    @JoinColumn(name = "from_port_id")
+    private Port currentFrom;
+    @ManyToOne
+    @JoinColumn(name = "to_port_id")
+    private Port currentTo;
+    private float currentFuel;
 
     public Ship(Long id) {
         this.id = id;

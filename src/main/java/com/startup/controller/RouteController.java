@@ -46,7 +46,7 @@ public class RouteController {
     }
 
     @RequestMapping(value = ROUTE_PATH, method = DELETE)
-    public ResponseEntity<Object> deleteRoute(@PathVariable Long id) {
+    public ResponseEntity deleteRoute(@PathVariable Long id) {
         routeService.deleteRoute(id);
         return new ResponseEntity(HttpStatus.OK);
     }

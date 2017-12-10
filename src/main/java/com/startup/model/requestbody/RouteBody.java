@@ -8,6 +8,7 @@ import java.util.List;
 @Data
 public class RouteBody {
     private Long id;
+    private String name;
     private Long shipId;
     private Long fromId;
     private Long toId;

@@ -4,17 +4,26 @@ import com.startup.model.entities.Coordinates;
 import com.startup.model.entities.Port;
 import com.startup.model.entities.Route;
 import com.startup.model.entities.Ship;
-import com.startup.model.enums.CustomPorts;
 import com.startup.model.requestbody.RouteBody;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 @Service
+@Transactional
 public class TrackingService {
+
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private final RouteService routeService;
     private final ShipService shipService;
@@ -27,6 +36,61 @@ public class TrackingService {
         this.routeService = routeService;
         this.shipService = shipService;
         this.portService = portService;
+    }
+
+    public void runShip(Ship ship, Route route, int step) {
+        Calendar cal = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+
+        final Port from = ship.getCurrentFrom();
+        final Port to = ship.getCurrentTo();
+        final Coordinates unitVector = getUnitVector(from, to);
+        final Coordinates currentPoint = new Coordinates(ship.getCurrentLatitude(), ship.getCurrentLongitude());
+        final Coordinates nextPoint = new Coordinates((currentPoint.getLatitude() + unitVector.getLatitude()*step),
+                (currentPoint.getLongitude() + unitVector.getLongitude()*step));
+        ship.setCurrentCoodrinates(nextPoint.getLatitude(), nextPoint.getLongitude());
+        if (((nextPoint.getLatitude() <= to.getLatitude() + 0.5) && (nextPoint.getLatitude() >= to.getLatitude() - 0.5) )
+                && ((nextPoint.getLongitude() <= to.getLongitude() + 0.5) && (nextPoint.getLongitude() >= to.getLongitude() - 0.5) )) {
+            //setting info
+            final String shipIsArrived = sdf.format(cal.getTime()) + " Судно " + ship.getName() + " прибыло в порт " + to.getName();
+
+            final StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append(route.getInfo());
+            stringBuilder.append("\n").append(shipIsArrived);
+
+            System.out.println(shipIsArrived);
+
+            //rewrite current from/to ports
+            ship.setCurrentFrom(to);
+            final Map<Long, Port> portsToId = route.getRoutePoints().stream().collect(Collectors.toMap(Port::getId, Function.identity()));
+            final Port newTo = portsToId.get( route.isReverse() ? to.getId() -1 : to.getId() + 1);
+            if (newTo != null) {
+                ship.setCurrentTo(newTo);
+                ship.setCurrentCoodrinates(ship.getCurrentFrom().getLatitude(), ship.getCurrentFrom().getLongitude());
+            } else {
+                float fuel = route.getAmountOfFuel() - ship.getCurrentFuel();
+                stringBuilder.append("\n").append(sdf.format(cal.getTime())).append(" Судно прибыло в пункт назначения. Потрачено топлива: " + fuel + "л");
+                route.setArchived(true);
+                ship.setCurrentCoodrinates(ship.getCurrentTo().getLatitude(), ship.getCurrentTo().getLongitude());
+            }
+
+            route.setInfo(stringBuilder.toString());
+        }
+        ship.setCurrentFuel(ship.getCurrentFuel() - generateFuelValue());
+
+        routeService.modifyRoute(route);
+        shipService.modifyShip(ship);
+    }
+
+    private float generateFuelValue() {
+        double fatal = Math.random();
+        Random rnd = new Random(System.currentTimeMillis());
+        int fuel = 5 + rnd.nextInt(10 - 5 + 1);
+        if (fatal < 0.005) {
+            return 40;
+        } else {
+            return fuel;
+        }
     }
 
     public void runShip(RouteBody routeBody) {
@@ -82,6 +146,19 @@ public class TrackingService {
     public void createDataIfNotExist() {
         portService.createPortsIfNotExists();
         shipService.createShipsIfNotExist();
+    }
+
+    @Scheduled(fixedDelay = 1000)
+    public void moveShips() {
+        System.out.println("Moving ships");
+        final List<Route> routes = routeService.getAllRoutes();
+        if (!isEmpty(routes)) {
+            routes.stream().filter(route -> !route.isArchived()).forEach(route -> {
+                if (route.getShip() != null) {
+                    runShip(route.getShip(), route, 1);
+                }
+            });
+        }
     }
 
 }
